@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P5 Motors — Motos Novas e Seminovas | Nova Iguaçu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black:   #060608;
+    --dark:    #0e0e11;
+    --card:    #141418;
+    --border:  rgba(255,255,255,0.07);
+    --orange:  #FF4D00;
+    --amber:   #FFB400;
+    --white:   #F2F0EC;
+    --muted:   #888;
+    --radius:  12px;
+    --font-display: 'Bebas Neue', sans-serif;
+    --font-body: 'Outfit', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: var(--font-body);
+    overflow-x: hidden;
+    line-height: 1.6;
+  }
+
+  /* ─── NOISE OVERLAY ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--black); }
+  ::-webkit-scrollbar-thumb { background: var(--orange); border-radius: 2px; }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 3rem;
+    transition: background 0.4s, backdrop-filter 0.4s, border-bottom 0.4s;
+  }
+  nav.scrolled {
+    background: rgba(6,6,8,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    letter-spacing: 2px;
+    color: var(--white);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .nav-logo span { color: var(--orange); }
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    list-style: none;
+  }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--white); }
+  .nav-cta {
+    background: var(--orange);
+    color: var(--white) !important;
+    padding: 0.55rem 1.4rem !important;
+    border-radius: 6px !important;
+    font-weight: 600 !important;
+  }
+  .nav-cta:hover { background: #e64300 !important; color: #fff !important; }
+
+  /* ─── HERO ─── */
+  #hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 3rem 5rem;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 70% at 75% 50%, rgba(255,77,0,0.15) 0%, transparent 65%),
+      radial-gradient(ellipse 40% 40% at 20% 80%, rgba(255,180,0,0.06) 0%, transparent 60%),
+      linear-gradient(180deg, var(--black) 0%, #0b0b0e 100%);
+  }
+  /* Speed lines */
+  .hero-lines {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .hero-lines::before {
+    content: '';
+    position: absolute;
+    top: 30%; right: -10%;
+    width: 120%; height: 2px;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,77,0,0.3) 40%, rgba(255,180,0,0.5) 60%, transparent 100%);
+    transform: rotate(-8deg);
+    animation: speedline1 3s ease-in-out infinite;
+  }
+  .hero-lines::after {
+    content: '';
+    position: absolute;
+    top: 38%; right: -10%;
+    width: 80%; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,77,0,0.15) 50%, transparent);
+    transform: rotate(-8deg);
+    animation: speedline1 3s ease-in-out infinite 0.5s;
+  }
+  @keyframes speedline1 {
+    0%,100% { opacity: 0.4; transform: rotate(-8deg) translateX(0); }
+    50% { opacity: 0.8; transform: rotate(-8deg) translateX(-2%); }
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255,77,0,0.12);
+    border: 1px solid rgba(255,77,0,0.3);
+    color: var(--orange);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.4rem 1rem;
+    border-radius: 100px;
+    margin-bottom: 1.5rem;
+    width: fit-content;
+    animation: fadeUp 0.8s ease both;
+  }
+  .hero-badge::before { content: '●'; font-size: 0.5rem; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(5rem, 12vw, 10rem);
+    line-height: 0.9;
+    letter-spacing: 0.02em;
+    color: var(--white);
+    animation: fadeUp 0.8s ease both 0.1s;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-title em {
+    font-style: normal;
+    color: var(--orange);
+    display: block;
+  }
+  .hero-sub {
+    margin-top: 1.5rem;
+    font-size: 1.1rem;
+    color: var(--muted);
+    max-width: 480px;
+    line-height: 1.7;
+    animation: fadeUp 0.8s ease both 0.2s;
+  }
+  .hero-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2.5rem;
+    animation: fadeUp 0.8s ease both 0.3s;
+  }
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--orange);
+    color: #fff;
+    padding: 0.9rem 2rem;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .btn-primary:hover { background: #e64300; transform: translateY(-2px); }
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: transparent;
+    color: var(--white);
+    padding: 0.9rem 2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    border: 1px solid var(--border);
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .btn-ghost:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2); }
+  .hero-stats {
+    display: flex;
+    gap: 3rem;
+    margin-top: 4rem;
+    padding-top: 2.5rem;
+    border-top: 1px solid var(--border);
+    animation: fadeUp 0.8s ease both 0.4s;
+  }
+  .stat-num {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    color: var(--white);
+    line-height: 1;
+  }
+  .stat-num span { color: var(--orange); }
+  .stat-label { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 0.3rem; }
+
+  /* Big moto image on hero */
+  .hero-moto {
+    position: absolute;
+    right: -3%;
+    bottom: 0;
+    width: 55%;
+    max-width: 800px;
+    opacity: 0.22;
+    filter: grayscale(100%) contrast(120%);
+    object-fit: contain;
+    pointer-events: none;
+    animation: fadeRight 1.2s ease both 0.3s;
+  }
+  @keyframes fadeRight { from { opacity: 0; transform: translateX(60px); } to { opacity: 0.22; transform: translateX(0); } }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ─── SEARCH BAR ─── */
+  #search {
+    background: var(--dark);
+    padding: 2rem 3rem;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    z-index: 10;
+  }
+  .search-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0.5rem 0.5rem 0.5rem 1.5rem;
+  }
+  .search-inner label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .search-inner input, .search-inner select {
+    background: transparent;
+    border: none;
+    color: var(--white);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    outline: none;
+    flex: 1;
+    padding: 0.5rem;
+  }
+  .search-inner select option { background: #1a1a1e; }
+  .search-divider { width: 1px; height: 28px; background: var(--border); flex-shrink: 0; }
+  .search-btn {
+    background: var(--orange);
+    color: #fff;
+    border: none;
+    padding: 0.9rem 2rem;
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s;
+  }
+  .search-btn:hover { background: #e64300; }
+
+  /* ─── SECTION WRAPPER ─── */
+  .section { padding: 5rem 3rem; max-width: 1400px; margin: 0 auto; }
+  .section-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--orange);
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    line-height: 1;
+    letter-spacing: 0.03em;
+    color: var(--white);
+  }
+  .section-title span { color: var(--orange); }
+
+  /* ─── VEHICLES GRID ─── */
+  #vehicles { padding: 5rem 3rem; }
+  .vehicles-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    max-width: 1400px;
+    margin: 0 auto 3rem;
+  }
+  .view-all {
+    color: var(--orange);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid rgba(255,77,0,0.3);
+    padding-bottom: 2px;
+    transition: border-color 0.2s;
+  }
+  .view-all:hover { border-color: var(--orange); }
+  .vehicles-grid {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+  .vehicle-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+    position: relative;
+    text-decoration: none;
+    display: block;
+  }
+  .vehicle-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(255,77,0,0.4);
+    box-shadow: 0 20px 60px rgba(255,77,0,0.1);
+  }
+  .vehicle-img-wrap {
+    position: relative;
+    aspect-ratio: 16/9;
+    overflow: hidden;
+    background: #0f0f13;
+  }
+  .vehicle-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s;
+    filter: brightness(0.9);
+  }
+  .vehicle-card:hover .vehicle-img-wrap img { transform: scale(1.05); }
+  .vehicle-tag {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    background: var(--orange);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 0.3rem 0.7rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+  .vehicle-year {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    background: rgba(0,0,0,0.65);
+    backdrop-filter: blur(8px);
+    color: var(--white);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.3rem 0.7rem;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+  }
+  .vehicle-info {
+    padding: 1.25rem;
+  }
+  .vehicle-name {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    letter-spacing: 0.04em;
+    color: var(--white);
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+  }
+  .vehicle-meta {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  .vehicle-meta span {
+    font-size: 0.78rem;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+  .vehicle-price {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    color: var(--amber);
+    letter-spacing: 0.04em;
+  }
+  .vehicle-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    border-top: 1px solid var(--border);
+  }
+  .vehicle-whatsapp {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #25D366;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+  .vehicle-whatsapp:hover { opacity: 0.8; }
+  .vehicle-arrow {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    color: var(--muted);
+    transition: background 0.2s, color 0.2s;
+  }
+  .vehicle-card:hover .vehicle-arrow { background: var(--orange); color: #fff; border-color: var(--orange); }
+
+  /* ─── WHY US ─── */
+  #why {
+    background: var(--dark);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 5rem 3rem;
+  }
+  .why-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: center;
+  }
+  .why-features {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+  }
+  .feature-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: border-color 0.3s, background 0.3s;
+  }
+  .feature-card:hover {
+    border-color: rgba(255,77,0,0.3);
+    background: rgba(255,77,0,0.04);
+  }
+  .feature-icon {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+  .feature-title {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--white);
+    margin-bottom: 0.4rem;
+  }
+  .feature-desc {
+    font-size: 0.83rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .why-visual {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .why-circle {
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,77,0,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .why-circle::before {
+    content: '';
+    position: absolute;
+    inset: 20px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,77,0,0.1);
+  }
+  .why-circle::after {
+    content: '';
+    position: absolute;
+    inset: 40px;
+    border-radius: 50%;
+    border: 1px dashed rgba(255,77,0,0.08);
+  }
+  .why-center {
+    text-align: center;
+  }
+  .why-center-num {
+    font-family: var(--font-display);
+    font-size: 5rem;
+    color: var(--orange);
+    line-height: 1;
+  }
+  .why-center-text {
+    font-size: 0.85rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 0.5rem;
+  }
+  .orbit-dot {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: var(--orange);
+    border-radius: 50%;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    animation: orbit 8s linear infinite;
+    transform-origin: 0 200px;
+  }
+  @keyframes orbit {
+    from { transform: rotate(0deg) translateY(-200px) rotate(0deg); }
+    to { transform: rotate(360deg) translateY(-200px) rotate(-360deg); }
+  }
+
+  /* ─── CTA STRIP ─── */
+  #cta {
+    padding: 5rem 3rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  #cta::before {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 300px;
+    background: radial-gradient(ellipse, rgba(255,77,0,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .cta-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    letter-spacing: 0.03em;
+    color: var(--white);
+    line-height: 1;
+    margin-bottom: 1rem;
+    position: relative;
+  }
+  .cta-title span { color: var(--orange); }
+  .cta-sub {
+    color: var(--muted);
+    font-size: 1rem;
+    max-width: 500px;
+    margin: 0 auto 2.5rem;
+    position: relative;
+  }
+  .btn-whatsapp {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    background: #25D366;
+    color: #fff;
+    padding: 1rem 2.5rem;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+    position: relative;
+  }
+  .btn-whatsapp:hover { background: #20bc5b; transform: translateY(-3px); }
+  .btn-whatsapp svg { width: 22px; height: 22px; fill: #fff; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--dark);
+    border-top: 1px solid var(--border);
+    padding: 3rem;
+  }
+  .footer-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 3rem;
+  }
+  .footer-logo {
+    font-family: var(--font-display);
+    font-size: 2.2rem;
+    letter-spacing: 2px;
+    color: var(--white);
+    margin-bottom: 1rem;
+  }
+  .footer-logo span { color: var(--orange); }
+  .footer-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.7; max-width: 300px; }
+  .footer-heading {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--orange);
+    font-weight: 600;
+    margin-bottom: 1.25rem;
+  }
+  .footer-links { list-style: none; }
+  .footer-links li { margin-bottom: 0.75rem; }
+  .footer-links a { color: var(--muted); text-decoration: none; font-size: 0.88rem; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--white); }
+  .footer-contact p { color: var(--muted); font-size: 0.88rem; margin-bottom: 0.75rem; line-height: 1.5; }
+  .footer-bottom {
+    max-width: 1400px;
+    margin: 2.5rem auto 0;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.78rem;
+    color: #555;
+  }
+  .footer-social {
+    display: flex;
+    gap: 0.75rem;
+  }
+  .social-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 1rem;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+  }
+  .social-btn:hover { background: rgba(255,77,0,0.1); color: var(--orange); border-color: rgba(255,77,0,0.3); }
+
+  /* ─── REVEAL ANIM ─── */
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ─── MARQUEE ─── */
+  .marquee-wrap {
+    background: var(--orange);
+    overflow: hidden;
+    padding: 0.75rem 0;
+    white-space: nowrap;
+  }
+  .marquee-inner {
+    display: inline-flex;
+    gap: 4rem;
+    animation: marquee 20s linear infinite;
+  }
+  .marquee-inner span {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    letter-spacing: 0.1em;
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .marquee-inner .dot { color: rgba(255,255,255,0.5); }
+  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* Floating WhatsApp */
+  .float-wa {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 200;
+    width: 56px;
+    height: 56px;
+    background: #25D366;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 24px rgba(37,211,102,0.4);
+    transition: transform 0.2s;
+    text-decoration: none;
+  }
+  .float-wa:hover { transform: scale(1.1); }
+  .float-wa svg { width: 28px; height: 28px; fill: #fff; }
+
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    #hero { padding: 0 1.5rem 4rem; }
+    .hero-moto { display: none; }
+    .hero-stats { gap: 1.5rem; flex-wrap: wrap; }
+    #search { padding: 1.5rem; }
+    .search-inner { flex-wrap: wrap; padding: 1rem; }
+    .search-divider { display: none; }
+    #vehicles { padding: 3rem 1.5rem; }
+    .vehicles-header { flex-direction: column; align-items: flex-start; gap: 1rem; margin-bottom: 2rem; }
+    .why-inner { grid-template-columns: 1fr; gap: 2rem; }
+    .why-visual { display: none; }
+    .footer-inner { grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .section { padding: 3rem 1.5rem; }
+    footer { padding: 3rem 1.5rem; }
+    #cta { padding: 4rem 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">P<span>5</span> MOTORS</a>
+  <ul class="nav-links">
+    <li><a href="#vehicles">Veículos</a></li>
+    <li><a href="https://p5motors.com.br/Financiamento">Financiamento</a></li>
+    <li><a href="https://p5motors.com.br/Empresa">Empresa</a></li>
+    <li><a href="https://p5motors.com.br/Localizacao">Localização</a></li>
+    <li><a href="https://api.whatsapp.com/send?phone=5521979182249&text=Ola" class="nav-cta" target="_blank">WhatsApp</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-lines"></div>
+  <img class="hero-moto" src="https://www.autocerto.com/fotos/4361/4123529/5_113702.jpg" alt="" aria-hidden="true">
+
+  <div class="hero-badge">Nova Iguaçu · RJ &nbsp;·&nbsp; Estoque Honda</div>
+
+  <h1 class="hero-title">
+    Sua Próxima<br><em>Moto</em><br>Começa Aqui
+  </h1>
+  <p class="hero-sub">
+    Motos novas e seminovas com garantia. Revisadas criteriosamente para você sair com tranquilidade.
+  </p>
+  <div class="hero-actions">
+    <a href="#vehicles" class="btn-primary">Ver Estoque →</a>
+    <a href="https://p5motors.com.br/Financiamento" class="btn-ghost">Simular Financiamento</a>
+  </div>
+  <div class="hero-stats">
+    <div>
+      <div class="stat-num">0<span>km</span></div>
+      <div class="stat-label">Modelos 0km</div>
+    </div>
+    <div>
+      <div class="stat-num">2<span>anos</span></div>
+      <div class="stat-label">Garantia (2016+)</div>
+    </div>
+    <div>
+      <div class="stat-num">100<span>%</span></div>
+      <div class="stat-label">Revisados</div>
+    </div>
+    <div>
+      <div class="stat-num"><span>#</span>1</div>
+      <div class="stat-label">Honda Moquetá</div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-inner">
+    <span>PCX 160 ABS</span><span class="dot">◆</span>
+    <span>NXR 160 BROS</span><span class="dot">◆</span>
+    <span>XRE 190 ADVENTURE</span><span class="dot">◆</span>
+    <span>CG 160 TITAN</span><span class="dot">◆</span>
+    <span>NC 750X</span><span class="dot">◆</span>
+    <span>CG 160 FAN</span><span class="dot">◆</span>
+    <span>FINANCIAMENTO PRÓPRIO</span><span class="dot">◆</span>
+    <span>PCX 160 ABS</span><span class="dot">◆</span>
+    <span>NXR 160 BROS</span><span class="dot">◆</span>
+    <span>XRE 190 ADVENTURE</span><span class="dot">◆</span>
+    <span>CG 160 TITAN</span><span class="dot">◆</span>
+    <span>NC 750X</span><span class="dot">◆</span>
+    <span>CG 160 FAN</span><span class="dot">◆</span>
+    <span>FINANCIAMENTO PRÓPRIO</span><span class="dot">◆</span>
+  </div>
+</div>
+
+<!-- SEARCH -->
+<div id="search">
+  <div class="search-inner">
+    <label>🔍 Buscar</label>
+    <input type="text" placeholder="Modelo, ano ou categoria...">
+    <div class="search-divider"></div>
+    <label>Preço até</label>
+    <select>
+      <option>Qualquer preço</option>
+      <option>R$ 15.000</option>
+      <option>R$ 20.000</option>
+      <option>R$ 30.000</option>
+      <option>R$ 50.000</option>
+    </select>
+    <div class="search-divider"></div>
+    <label>Ano</label>
+    <select>
+      <option>Qualquer ano</option>
+      <option>2026</option>
+      <option>2025</option>
+      <option>2024</option>
+      <option>2023 e anterior</option>
+    </select>
+    <button class="search-btn" onclick="window.location='https://p5motors.com.br/Veiculos'">Buscar Motos</button>
+  </div>
+</div>
+
+<!-- VEHICLES -->
+<section id="vehicles">
+  <div class="vehicles-header reveal">
+    <div>
+      <div class="section-label">Estoque Disponível</div>
+      <h2 class="section-title">Ofertas em <span>Destaque</span></h2>
+    </div>
+    <a href="https://p5motors.com.br/Veiculos" class="view-all">Ver todo o estoque →</a>
+  </div>
+
+  <div class="vehicles-grid">
+
+    <a class="vehicle-card reveal" href="https://p5motors.com.br/Veiculo/pcx-160-abs-pcx-160-abs-gasolina-2026/4123485/detalhes" target="_blank">
+      <div class="vehicle-img-wrap">
+        <img src="https://www.autocerto.com/fotos/4361/4123485/2_113210.jpg" alt="PCX 160 ABS" loading="lazy">
+        <span class="vehicle-tag">0 KM</span>
+        <span class="vehicle-year">2025/2026</span>
+      </div>
+      <div class="vehicle-info">
+        <div class="vehicle-name">PCX 160 ABS</div>
+        <div class="vehicle-meta">
+          <span>⚡ Gasolina</span>
+          <span>🛵 Scooter</span>
+          <span>📦 0 km</span>
+        </div>
+        <div class="vehicle-price">Sob Consulta</div>
+      </div>
+      <div class="vehicle-footer">
+        <a class="vehicle-whatsapp" href="https://api.whatsapp.com/send?phone=5521979182249&text=Ola%2C%20quero%20saber%20sobre%20a%20PCX%20160%20ABS" target="_blank" onclick="event.stopPropagation()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.062.525 4.003 1.447 5.693L0 24l6.468-1.405A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.893 0-3.665-.52-5.18-1.426l-.371-.22-3.847.835.872-3.748-.243-.385A9.952 9.952 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+          Consultar
+        </a>
+        <div class="vehicle-arrow">→</div>
+      </div>
+    </a>
+
+    <a class="vehicle-card reveal" href="https://p5motors.com.br/Veiculo/nxr-160-bros-abs-nxr-160-bros-abs-flex-2026/4123715/detalhes" target="_blank">
+      <div class="vehicle-img-wrap">
+        <img src="https://www.autocerto.com/fotos/4361/4123715/2_121624.jpg" alt="NXR 160 BROS" loading="lazy">
+        <span class="vehicle-tag">0 KM</span>
+        <span class="vehicle-year">2025/2026</span>
+      </div>
+      <div class="vehicle-info">
+        <div class="vehicle-name">NXR 160 BROS ABS</div>
+        <div class="vehicle-meta">
+          <span>⛽ Flex</span>
+          <span>🏍️ Trail</span>
+          <span>📦 0 km</span>
+        </div>
+        <div class="vehicle-price">Sob Consulta</div>
+      </div>
+      <div class="vehicle-footer">
+        <a class="vehicle-whatsapp" href="https://api.whatsapp.com/send?phone=5521979182249&text=Ola%2C%20quero%20saber%20sobre%20a%20NXR%20160%20BROS" target="_blank" onclick="event.stopPropagation()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.062.525 4.003 1.447 5.693L0 24l6.468-1.405A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.893 0-3.665-.52-5.18-1.426l-.371-.22-3.847.835.872-3.748-.243-.385A9.952 9.952 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+          Consultar
+        </a>
+        <div class="vehicle-arrow">→</div>
+      </div>
+    </a>
+
+    <a class="vehicle-card reveal" href="https://p5motors.com.br/Veiculo/xre-190-adventure-xre-190-adventure-flex-2026/4123529/detalhes" target="_blank">
+      <div class="vehicle-img-wrap">
+        <img src="https://www.autocerto.com/fotos/4361/4123529/5_113702.jpg" alt="XRE 190 Adventure" loading="lazy">
+        <span class="vehicle-tag">0 KM</span>
+        <span class="vehicle-year">2025/2026</span>
+      </div>
+      <div class="vehicle-info">
+        <div class="vehicle-name">XRE 190 Adventure</div>
+        <div class="vehicle-meta">
+          <span>⛽ Flex</span>
+          <span>🏕️ Adventure</span>
+          <span>📦 0 km</span>
+        </div>
+        <div class="vehicle-price">Sob Consulta</div>
+      </div>
+      <div class="vehicle-footer">
+        <a class="vehicle-whatsapp" href="https://api.whatsapp.com/send?phone=5521979182249&text=Ola%2C%20quero%20saber%20sobre%20a%20XRE%20190" target="_blank" onclick="event.stopPropagation()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.062.525 4.003 1.447 5.693L0 24l6.468-1.405A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.893 0-3.665-.52-5.18-1.426l-.371-.22-3.847.835.872-3.748-.243-.385A9.952 9.952 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+          Consultar
+        </a>
+        <div class="vehicle-arrow">→</div>
+      </div>
+    </a>
+
+    <a class="vehicle-card reveal" href="https://p5motors.com.br/Veiculo/cg-160-titan-cg-160-titan-flex-2026/3841338/detalhes" target="_blank">
+      <div class="vehicle-img-wrap">
+        <img src="https://www.autocerto.com/fotos/4361/3841338/6_113607.jpg" alt="CG 160 Titan" loading="lazy">
+        <span class="vehicle-tag">0 KM</span>
+        <span class="vehicle-year">2025/2026</span>
+      </div>
+      <div class="vehicle-info">
+        <div class="vehicle-name">CG 160 TITAN</div>
+        <div class="vehicle-meta">
+          <span>⛽ Flex</span>
+          <span>🏍️ Naked</span>
+          <span>📦 0 km</span>
+        </div>
+        <div class="vehicle-price">Sob Consulta</div>
+      </div>
+      <div class="vehicle-footer">
+        <a class="vehicle-whatsapp" href="https://api.whatsapp.com/send?phone=5521979182249&text=Ola%2C%20quero%20saber%20sobre%20a%20CG%20160%20Titan" target="_blank" onclick="event.stopPropagation()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.062.525 4.003 1.447 5.693L0 24l6.468-1.405A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.893 0-3.665-.52-5.18-1.426l-.371-.22-3.847.835.872-3.748-.243-.385A9.952 9.952 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+          Consultar
+        </a>
+        <div class="vehicle-arrow">→</div>
+      </div>
+    </a>
+
+    <a class="vehicle-card reveal" href="https://p5motors.com.br/Veiculo/nc-750x-nc-750x-gasolina-2016/4292781/detalhes" target="_blank">
+      <div class="vehicle-img-wrap">
+        <img src="https://www.autocerto.com/fotos/4361/4292781/1_061034.jpg" alt="NC 750X" loading="lazy">
+        <span class="vehicle-tag" style="background: var(--amber); color: #000;">Usado</span>
+        <span class="vehicle-year">2015/2016</span>
+      </div>
+      <div class="vehicle-info">
+        <div class="vehicle-name">NC 750X</div>
+        <div class="vehicle-meta">
+          <span>⛽ Gasolina</span>
+          <span>🏍️ Sport</span>
+          <span>✅ Revisado</span>
+        </div>
+        <div class="vehicle-price">Sob Consulta</div>
+      </div>
+      <div class="vehicle-footer">
+        <a class="vehicle-whatsapp" href="https://api.whatsapp.com/send?phone=5521979182249&text=Ola%2C%20quero%20saber%20sobre%20a%20NC%20750X" target="_blank" onclick="event.stopPropagation()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.062.525 4.003 1.447 5.693L0 24l6.468-1.405A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.893 0-3.665-.52-5.18-1.426l-.371-.22-3.847.835.872-3.748-.243-.385A9.952 9.952 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+          Consultar
+        </a>
+        <div class="vehicle-arrow">→</div>
+      </div>
+    </a>
+
+    <a class="vehicle-card reveal" href="https://p5motors.com.br/Veiculo/cg-160-fan-cg-160-fan-flex-2026/3735950/detalhes" target="_blank">
+      <div class="vehicle-img-wrap">
+        <img src="https://www.autocerto.com/fotos/4361/3735950/2_112352.jpg" alt="CG 160 Fan" loading="lazy">
+        <span class="vehicle-tag">0 KM</span>
+        <span class="vehicle-year">2025/2026</span>
+      </div>
+      <div class="vehicle-info">
+        <div class="vehicle-name">CG 160 FAN</div>
+        <div class="vehicle-meta">
+          <span>⛽ Flex</span>
+          <span>🏍️ Naked</span>
+          <span>📦 0 km</span>
+        </div>
+        <div class="vehicle-price">Sob Consulta</div>
+      </div>
+      <div class="vehicle-footer">
+        <a class="vehicle-whatsapp" href="https://api.whatsapp.com/send?phone=5521979182249&text=Ola%2C%20quero%20saber%20sobre%20a%20CG%20160%20Fan" target="_blank" onclick="event.stopPropagation()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.062.525 4.003 1.447 5.693L0 24l6.468-1.405A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.893 0-3.665-.52-5.18-1.426l-.371-.22-3.847.835.872-3.748-.243-.385A9.952 9.952 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+          Consultar
+        </a>
+        <div class="vehicle-arrow">→</div>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<!-- WHY US -->
+<section id="why">
+  <div class="why-inner">
+    <div>
+      <div class="section-label">Por Que P5 Motors</div>
+      <h2 class="section-title reveal">Garantia <span>Real</span>,<br>Revisão <span>de Verdade</span></h2>
+      <p style="color: var(--muted); margin-top: 1.25rem; line-height: 1.8; font-size: 0.95rem;" class="reveal">
+        Somos especializados na venda de veículos novos e usados, nacionais e importados. Todos revisados criteriosamente para você ter tranquilidade na hora da compra.
+      </p>
+      <div class="why-features">
+        <div class="feature-card reveal">
+          <span class="feature-icon">🔧</span>
+          <div class="feature-title">Revisão Completa</div>
+          <div class="feature-desc">Cada moto passa por revisão técnica antes de ir ao estoque.</div>
+        </div>
+        <div class="feature-card reveal">
+          <span class="feature-icon">🛡️</span>
+          <div class="feature-title">Garantia Estendida</div>
+          <div class="feature-desc">2 anos de garantia para veículos 2016 em diante.</div>
+        </div>
+        <div class="feature-card reveal">
+          <span class="feature-icon">💳</span>
+          <div class="feature-title">Financiamento Fácil</div>
+          <div class="feature-desc">Parcelas que cabem no seu bolso. Aprovação rápida.</div>
+        </div>
+        <div class="feature-card reveal">
+          <span class="feature-icon">📍</span>
+          <div class="feature-title">Fácil Acesso</div>
+          <div class="feature-desc">Moquetá, Nova Iguaçu — no coração da Baixada.</div>
+        </div>
+      </div>
+    </div>
+    <div class="why-visual">
+      <div class="why-circle">
+        <div class="orbit-dot"></div>
+        <div class="why-center">
+          <div class="why-center-num">+500</div>
+          <div class="why-center-text">Clientes atendidos</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <h2 class="cta-title reveal">Achou a Moto<br>dos seus <span>Sonhos?</span></h2>
+  <p class="cta-sub reveal">Fale agora com nossos especialistas pelo WhatsApp e saia rodando hoje mesmo.</p>
+  <a class="btn-whatsapp reveal" href="https://api.whatsapp.com/send?phone=5521979182249&text=Ola%2C%20quero%20saber%20mais%20sobre%20as%20motos" target="_blank">
+    <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.062.525 4.003 1.447 5.693L0 24l6.468-1.405A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.893 0-3.665-.52-5.18-1.426l-.371-.22-3.847.835.872-3.748-.243-.385A9.952 9.952 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+    Falar no WhatsApp
+  </a>
+  <p style="color: #444; font-size: 0.82rem; margin-top: 1.5rem; position: relative;">📞 Ou ligue: <a href="tel:+5521979182249" style="color: var(--muted);">(21) 97918-2249</a></p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-logo">P<span>5</span> MOTORS</div>
+      <p class="footer-desc">Motos novas e seminovas com revisão e garantia. Atendemos com prazer em Nova Iguaçu, RJ.</p>
+      <div class="footer-social" style="margin-top: 1.5rem;">
+        <a class="social-btn" href="https://www.instagram.com/p5motorsoficial/" target="_blank">📸</a>
+        <a class="social-btn" href="https://api.whatsapp.com/send?phone=5521979182249" target="_blank">💬</a>
+        <a class="social-btn" href="tel:+5521979182249">📞</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-heading">Links</div>
+      <ul class="footer-links">
+        <li><a href="https://p5motors.com.br/">Home</a></li>
+        <li><a href="https://p5motors.com.br/Veiculos">Veículos</a></li>
+        <li><a href="https://p5motors.com.br/Financiamento">Financiamento</a></li>
+        <li><a href="https://p5motors.com.br/VendaSeuCarro">Venda seu Carro</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-heading">Empresa</div>
+      <ul class="footer-links">
+        <li><a href="https://p5motors.com.br/Empresa">Quem Somos</a></li>
+        <li><a href="https://p5motors.com.br/Localizacao">Localização</a></li>
+        <li><a href="https://p5motors.com.br/Contato">Fale Conosco</a></li>
+        <li><a href="https://p5motors.com.br/PoliticaPrivacidade">Privacidade</a></li>
+      </ul>
+    </div>
+    <div class="footer-contact">
+      <div class="footer-heading">Contato</div>
+      <p>📞 (21) 97918-2249</p>
+      <p>📍 Rua Antônio Wilman, Nº 108<br>Moquetá — Nova Iguaçu, RJ</p>
+      <p>⏰ Seg–Sex: 9h–18h<br>Sáb: 9h–14h</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 P5 Motors. Todos os direitos reservados.</span>
+    <span>Desenvolvido com ♥ em Nova Iguaçu</span>
+  </div>
+</footer>
+
+<!-- Floating WhatsApp -->
+<a class="float-wa" href="https://api.whatsapp.com/send?phone=5521979182249&text=Ola" target="_blank" aria-label="WhatsApp">
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.062.525 4.003 1.447 5.693L0 24l6.468-1.405A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.893 0-3.665-.52-5.18-1.426l-.371-.22-3.847.835.872-3.748-.243-.385A9.952 9.952 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+</a>
+
+<script>
+  // Navbar scroll
+  const nav = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 50);
+  });
+
+  // Reveal on scroll
+  const reveals = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach(r => obs.observe(r));
+</script>
+</body>
+</html>
