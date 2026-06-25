@@ -239,9 +239,13 @@ h1,h2,h3,h4{font-family:var(--d-display);font-weight:800;line-height:1.04;letter
 .hours b{color:var(--bone)}
 
 /* ---- final cta ---- */
-.final{position:relative;text-align:center;padding:120px 0;background:linear-gradient(180deg,#0a0b0e,var(--ink))}
-.final::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(236,28,34,.14),transparent 60%)}
-.final .wrap{position:relative}
+.final{position:relative;text-align:center;padding:132px 0;overflow:hidden;background:#0a0b0e}
+.final video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+.final .fscrim{position:absolute;inset:0;z-index:1;
+  background:linear-gradient(180deg,rgba(8,9,11,.84),rgba(8,9,11,.74)),radial-gradient(ellipse at 50% 32%,rgba(236,28,34,.22),transparent 60%)}
+.final .fscrim::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(var(--ink),transparent 16%,transparent 84%,var(--ink))}
+.final .wrap{position:relative;z-index:2}
 .final h2{font-size:clamp(2.2rem,5.5vw,4rem);text-transform:uppercase}
 .final p{color:var(--mute);max-width:50ch;margin:18px auto 36px;font-size:1.1rem}
 .final .actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
@@ -283,18 +287,35 @@ footer ul a{color:var(--mute);font-size:.92rem;transition:.2s}footer ul a:hover{
 #load .t{font-family:var(--d-display);font-weight:700;font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;color:var(--steel)}
 
 @media(max-width:980px){
-  .nav .links,.nav .cta-wrap .btn-ghost{display:none}
+  .nav .links,.nav .cta-wrap .btn{display:none}
   .burger{display:flex}
   .armor .split,.ia .split,.loc .split{grid-template-columns:1fr;gap:40px}
   .veic-grid,.why-grid{grid-template-columns:repeat(2,1fr)}
+  .fgrid{grid-template-columns:1fr 1fr;gap:32px}
   .sec{padding:78px 0}
 }
 @media(max-width:640px){
   .wrap{padding:0 18px}
   .veic-grid,.why-grid{grid-template-columns:1fr}
-  .hero .stats{gap:24px}.hero .stat .n{font-size:1.9rem}
+  .hero{min-height:auto;padding:40px 0 56px}
+  .hero .badge{flex-wrap:wrap;font-size:.72rem;padding:7px 14px;line-height:1.5}
+  .hero h1{font-size:clamp(2.3rem,11vw,3rem)}
+  .hero .actions{flex-direction:column}
+  .hero .actions .btn{width:100%}
+  .hero .stats{display:grid;grid-template-columns:1fr 1fr;gap:22px 16px;margin-top:44px}
+  .hero .stat .n{font-size:1.8rem}
   .ubar .u-l{display:none}
+  .ubar .wrap{justify-content:center}
   .armor .specs{grid-template-columns:1fr}
+  .fgrid{grid-template-columns:1fr;gap:30px}
+  .fbar{flex-direction:column;gap:8px;text-align:center}
+  footer .about{max-width:none}
+  .filters{flex-direction:column;align-items:stretch}
+  .filters .search,.filters select,.filters .chip{width:100%}
+  .filters .chip{justify-content:center}
+  .fcount{margin:2px 0 0;text-align:center}
+  .final{padding:88px 0}
+  .sec-head{margin-bottom:38px}
 }
 @media(prefers-reduced-motion:reduce){*{animation:none!important;scroll-behavior:auto}.rv{opacity:1;transform:none}}
 </style>
@@ -544,6 +565,10 @@ document.querySelectorAll('.faq button').forEach(btn=>btn.addEventListener('clic
 // gtm whatsapp_click
 document.querySelectorAll('.wa-cta').forEach(a=>a.addEventListener('click',()=>{
   window.dataLayer=window.dataLayer||[];dataLayer.push({event:'whatsapp_click',page:document.body.dataset.page});}));
+// robust muted autoplay (mobile / GitHub Pages need muted set in JS before play)
+function forcePlay(v){if(!v)return;try{v.muted=true;v.defaultMuted=true;v.setAttribute('muted','');v.playsInline=true;const p=v.play();if(p&&p.catch)p.catch(()=>{});}catch(e){}}
+document.querySelectorAll('video').forEach(v=>{forcePlay(v);['loadeddata','canplay'].forEach(ev=>v.addEventListener(ev,()=>forcePlay(v)));});
+['touchstart','click','scroll','keydown'].forEach(ev=>window.addEventListener(ev,function r(){document.querySelectorAll('video').forEach(forcePlay);},{once:true,passive:true}));
 </script>
 <script>
 let ALL=[],VIEW=[];
