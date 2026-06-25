@@ -544,8 +544,24 @@ form.addEventListener('submit',async e=>{
       await fetch(WEBHOOK_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
     }
   }catch(err){/* segue para o WhatsApp mesmo se o webhook falhar */}
-  // WhatsApp de confirmação: SEM dados sensíveis (sem CPF, renda ou nascimento)
-  const msg=`Olá! Acabei de enviar minha ficha de financiamento pelo site.%0A%0ANome: ${encodeURIComponent(data.nome||'')}%0AVeículo: ${encodeURIComponent(data.veiculo||'a definir')}%0ATroca: ${encodeURIComponent(data.troca||'-')}`;
+  // WhatsApp com a ficha COMPLETA
+  const linhas=[
+    '*Ficha de Financiamento — Site Vanorth*','',
+    `*Nome:* ${data.nome||'-'}`,
+    `*CPF:* ${data.cpf||'-'}`,
+    `*Telefone:* ${data.telefone||'-'}`,
+    `*E-mail:* ${data.email||'-'}`,
+    `*Nascimento:* ${data.nascimento||'-'}`,
+    `*Profissão:* ${data.profissao||'-'}`,
+    `*Veículo de interesse:* ${data.veiculo||'a definir'}`,
+    `*Renda:* ${data.renda||'-'}`,
+    `*Entrada:* ${data.entrada||'-'}`,
+    `*Troca:* ${data.troca||'-'}`,
+    `*Observações:* ${data.obs||'-'}`,
+    `*Unidade:* ${data.unidade||'-'}`,
+    `*Origem:* ${data.origem||'-'}`
+  ];
+  const msg=encodeURIComponent(linhas.join('\n'));
   const waUrl=`https://api.whatsapp.com/send?phone=${WA_NUM}&text=${msg}`;
   form.closest('.fin-form').innerHTML=`<div class="fin-ok"><div class="big"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg></div>
     <h3>Ficha enviada!</h3><p>Recebemos seus dados. Um consultor vai te retornar em breve. Para agilizar, finalize pelo WhatsApp agora mesmo.</p>
